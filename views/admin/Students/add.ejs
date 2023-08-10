@@ -1,0 +1,297 @@
+<%- include('../elements/header'); %> <div class="main-content">
+  <div class="main-content-inner">
+    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <li>
+          <i class="ace-icon fa fa-tachometer"></i>
+          <a href="<%=nodeAdminUrl%>/Dashboard">Dashboard </a>
+        </li>
+        <li class="active">
+          <a href="<%=nodeAdminUrl%>/categories/list"> Categories </a>
+        </li>
+        <li class="active"><%=action%> </li>
+      </ul>
+      <div class="nav-search" id="nav-search">
+        <form class="form-search">
+          <span class="input-icon">
+            <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+            <i class="ace-icon fa fa-search nav-search-icon"></i>
+          </span>
+        </form>
+      </div>
+      <!-- /.nav-search -->
+    </div>
+    <div class="page-content">
+      <div class="page-header">
+        <h1> Add New <%=controller%> <small>
+        </h1>
+      </div>
+      <!-- /.page-header -->
+      <div class="row"><%- include ../elements/flash.ejs %> <div class="col-xs-12 col-sm-6">
+          <div class=" ">
+            <form method="post" action="<%=nodeAdminUrl%>/<%=controller%>/add" enctype="multipart/form-data">
+              <input type="hidden" name="user_id" value="<%=session_check.LoginUser._id%>">
+              <div class="widget-body">
+                <div class="widget-main">
+                  <div class="form-group row">
+                    <label for="form-field-select-1" class="col-sm-4 col-form-label">Name</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" id="form-field-select-1" value="<%=data.first_name%>" placeholder="Name" name="first_name">
+                      <span class="error"><%=errorData.first_name%> </span>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="form-field-select-1" class="col-sm-4 col-form-label">Phone number</label>
+                    <div class="col-sm-8">
+                      <input type="number" class="form-control" id="form-field-select-1" placeholder="Phone number" value="<%=data.contact_number%>" name="contact_number">
+                      <span class="error"><%=errorData.contact_number%> </span>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="form-field-select-1" class="col-sm-4 col-form-label">Address</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" id="form-field-select-1" placeholder="Address" value="<%=data.address%>" name="address">
+                      <span class="error"><%=errorData.address%> </span>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="form-field-select-1" class="col-sm-4 col-form-label"> Profile Image </label>
+                    <div class="col-sm-8">
+                      <input type="file" name="profile_pic" id="form-field-select-1" class="form-control">
+                      <span class="error"><%=errorData.profile_pic%> </span>
+                    </div>
+                  </div>
+                  <div class="form-group row" id="membership_type">
+                    <label for="form-field-select-2" class="col-sm-4 col-form-label">Membership type</label>
+                    <div class="col-sm-8">
+                      <select class="form-control" name="membershipType_id" id="membershipType" class="form-control" onchange="membership_type(event)">
+                        
+                      </select>
+                      <span class="error"><%=errorData.membershipType_id%> </span>
+                    </div>
+                  </div>
+                  <div class="form-group row" id="membership_type">
+                   <label for="form-field-select-2" class="col-sm-4 col-form-label">Membership Options</label>
+                   <div class="col-sm-8">
+                     <select class="form-control" name="membershipTypeOption_id" id="membeshipTypeOption" class="form-control" onchange="membershipOption(event)">
+                       
+                     </select>
+                     <span class="error"><%=errorData.membershipTypeOption_id%> </span>
+                   </div>
+                 </div>
+                  <div class="form-group row">
+                    <label for="form-field-select-1" class="col-sm-4 col-form-label"> Start Date </label>
+                    <div class="col-sm-4">
+                      <input type="date" name="start_date" id="form-field-select-1" class="form-control" onchange="CheckMembershipTypeOption()">
+                      <span class="error"><%=errorData.start_date%> </span>
+                    </div>
+                    <div class="col-sm-4">
+                      <div>
+                        <label class="radio-inline">
+                          <input type="radio" value="Lunch" name="start_date_meal" onchange="getEndDate(event)">Lunch </label>
+                        <label class="radio-inline">
+                          <input type="radio" value="Dinner" name="start_date_meal" onchange="getEndDate(event)">Dinner </label>
+                      </div>
+                      <span class="error"><%=errorData.start_date_meal%> </span>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="form-field-select-1" class="col-sm-4 col-form-label"> End Date </label>
+                    <div class="col-sm-4">
+                      <input type="date" name="end_date" id="form-field-select-1" class="form-control">
+                      <span class="error"><%=errorData.end_date%> </span>
+                    </div>
+                    <div class="col-sm-4">
+                      <div>
+                        <label class="radio-inline">
+                          <input type="radio" value="Lunch" name="end_date_meal">Lunch </label>
+                        <label class="radio-inline">
+                          <input type="radio" value="Dinner" name="end_date_meal">Dinner </label>
+                      </div>
+                      <span class="error"><%=errorData.end_date_meal%> </span>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="form-field-select-2" class="col-sm-4 col-form-label">Payment</label>
+                    <div class="col-sm-8">
+                      <div>
+                        <label class="radio-inline">
+                          <input type="radio" value="Cash" name="payment">Cash </label>
+                        <!-- <label class="radio-inline">
+                          <input type="radio" value="Online" name="payment">Online </label> -->
+                      </div>
+                      <span class="error"><%=errorData.payment%> </span>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="form-field-select-2" class="col-sm-4 col-form-label">Amount</label>
+                    <div class="col-sm-8">
+                      <input type="number" class="form-control" name="amount">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="form-field-select-2" class="col-sm-4 col-form-label">Location</label>
+                    <div class="col-sm-8">
+                      <select class="form-control" name="location_id">
+                        <option value="" disabled selected>Select Location</option><% for (var i = 0; i < All_locations.length; i++) { %> <option value="<%= All_locations[i]._id %>"><%= All_locations[i].name %> </option><% } %>
+                      </select>
+                      <span class="error"><%=errorData.location_id%> </span>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="form-field-select-2" class="col-sm-4 col-form-label">Remark</label>
+                    <div class="col-sm-8">
+                       <textarea class="form-control" name="remark"></textarea>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="form-field-select-2" class="col-sm-4 col-form-label">Status</label>
+                    <div class="col-sm-8">
+                      <select class="form-control" name="is_active" id="form-field-select-2">
+                        <option value="1">Active </option>
+                        <option value="0">Inactive </option>
+                      </select>
+                      <span class="error"><%=errorData.is_active%> </span>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="row">
+                      <div class="col-md-offset-3 col-md-9">
+                        <button class="btn btn-info" type="submit">
+                          <i class="ace-icon fa fa-check bigger-110"></i> Submit </button> &nbsp; &nbsp; &nbsp; <a href="<%=nodeAdminUrl%>/<%=controller%>/list%>">
+                          <button class="btn" type="button"> Cancel </button>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="space-2"></div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          </form>
+        </div>
+      </div>
+      <!-- /.span -->
+    </div>
+  </div>
+  <!-- /.page-content -->
+</div>
+</div>
+<!-- /.main-content -->
+<script>
+  function membership_type(event){
+   $("#membeshipTypeOption").empty();
+   $("input[name=start_date]").val("");
+   $("input[name=end_date]").val("");
+   $('input[name="start_date_meal"]').prop('checked', false);
+   $('input[name="end_date_meal"]').prop('checked', false);
+   $.ajax({
+     url:`/api/membershipTypeOptions/get/${event.target.value}`,
+     method:"GET",
+     success:function(data){
+       var html = `<option value="" selected disabled>Select membership type option</option>`;
+       data.data.map(function(element){
+         html += `<option value="${element._id}">${element.name}</option>`;
+       });
+       $("#membeshipTypeOption").append(html);
+     }
+   })
+  }
+  function membershipOption(event){
+    console.log(event.target.value);
+   $("input[name=start_date]").val("");
+   $("input[name=end_date]").val("");
+   $('input[name="start_date_meal"]').prop('checked', false);
+   $('input[name="end_date_meal"]').prop('checked', false);
+   $.ajax({
+    url:`/api/getAmount/${event.target.value}`,
+    method: 'GET',
+    success:function(data){
+      console.log(data);
+      if(data.status == true){
+        $("input[name='amount']").val(data.data.amount);
+      }
+    }
+   });
+  }
+  function check_mess_option() {
+    $("input[name='start_date']").val('');
+    $("input[name='end_date']").val('');
+    $('input[name="start_date_meal"]').prop('checked', false);
+    $('input[name="end_date_meal"]').prop('checked', false);
+  }
+
+  function CheckMembershipTypeOption() {
+    var type = $("select[name='membershipType_id']").val();
+    var option = $("select[name='membershipTypeOption_id']").val();
+    //alert(option);
+    $("input[name='end_date']").val('');
+    $('input[name="start_date_meal"]').prop('checked', false);
+    $('input[name="end_date_meal"]').prop('checked', false);
+    if (type == '') {
+      alert("Please select a membership type");
+      $("input[name='start_date']").val('');
+    } else if (type == '64841eefb890ecb9bd6ffb0e' && (option == undefined || option == '' || option == null)) {
+      alert("Please select a membership type option");
+      $("input[name='start_date']").val('');
+    } else if (type == '64841eefb890ecb9bd6ffb0e' && (option == "6486e7e98ba4078866e2e70b" || option == "6486e7e98ba4078866e2e70b")) {
+      $('input[name="start_date_meal"][value="Lunch"]').prop('checked', true);
+      var start_date = $("input[name='start_date']").val();
+      totalDiet = 32;
+      const date = new Date(start_date);
+      date.setDate(date.getDate() + totalDiet);
+      const newDateStr = date.toISOString().split("T")[0];
+      $("input[name='end_date']").val(newDateStr);
+      $('input[name="end_date_meal"][value="Lunch"]').prop('checked', true);
+    } else if (type == '64841eefb890ecb9bd6ffb0e' && option == "6486e8178ba4078866e2e70d") {
+      $('input[name="start_date_meal"][value="Dinner"]').prop('checked', true);
+      var start_date = $("input[name='start_date']").val();
+      totalDiet = 32;
+      const date = new Date(start_date);
+      date.setDate(date.getDate() + totalDiet);
+      const newDateStr = date.toISOString().split("T")[0];
+      $("input[name='end_date']").val(newDateStr);
+      $('input[name="end_date_meal"][value="Dinner"]').prop('checked', true);
+    }
+  }
+
+  function getEndDate(event) {
+    var meal = event.target.value;
+    var start_date = $("input[name='start_date']").val();
+    var type = $("select[name='membershipType_id']").val();
+    var option = $("select[name='membershipTypeOption_id']").val();
+    var formData = new FormData();
+    //formData.append('type',type);
+    formData.append('option',option);
+    formData.append('start_date',start_date);
+    formData.append('meal',meal);
+    $.ajax({
+      url:`/admin/Students/endDate`,
+      method: "POST",
+      dataType: "json",
+      data:formData,
+      processData: false,
+      contentType: false,
+      success: function(data){
+        $("input[name='end_date']").val(data.data.endDate);
+        $(`input[name="end_date_meal"][value="${data.data.meal}"]`).prop('checked', true);
+      }
+    });
+
+  }
+  function getMembershipTye(){
+   $("#membershipType").empty();
+   $.ajax({
+     url:`/api/membershipTypes`,
+     method:"GET",
+     success:function(data){
+       var html = `<option value="" selected disabled>Select membership type</option>`;
+       data.data.map(function(element){
+         html += `<option value="${element._id}">${element.name}</option>`;
+       });
+       $("#membershipType").append(html);
+     }
+   })
+  }
+  getMembershipTye();
+</script><%- include('../elements/footer'); %>

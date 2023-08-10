@@ -1,0 +1,109 @@
+<%- include('elements/header'); %>
+<div class="main-content">
+  <style>
+    #rules,
+    #terms {
+      height: 200px;
+    }
+  </style>
+  <div class="main-content-inner">
+    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <li>
+          <i class="ace-icon fa fa-tachometer"></i>
+          <a href="<%=nodeAdminUrl%>/Dashboard">Dashboard</a>
+        </li>
+        <li class="active">Locations</li>
+      </ul>
+    </div>
+    <div class="page-content">
+      <form onsubmit="updateContent(event)">
+        <input type="hidden" name="_id" />
+        <div class="row">
+          <div class="col-md-2">
+            <label>Rules and Regulations</label>
+          </div>
+          <div class="col-md-10">
+            <div id="rules"></div>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-md-2">
+            <label>Terms and Conditions</label>
+          </div>
+          <div class="col-md-10">
+            <div id="terms"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <input type="submit" value="Update" class="btn btn-primary" />
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- /.page-content -->
+  </div>
+</div>
+<!-- /.main-content -->
+<%- include('elements/footer'); %>
+<!-- page specific plugin scripts -->
+<script>
+  var rules = new Quill("#rules", {
+    theme: "snow",
+  });
+  var terms = new Quill("#terms", {
+    theme: "snow",
+  });
+</script>
+<script>
+  function getContent() {
+    $.ajax({
+      url: `/admin/content/get`,
+      method: "GET",
+      dataType: "json",
+      success: function (data) {
+        var response = [data.data[0]];
+        if (data.status == true) {
+          rules.root.innerHTML =
+            response[0].rules_regulations != undefined
+              ? response[0].rules_regulations
+              : "";
+          terms.root.innerHTML =
+            response[0].terms_conditions != undefined
+              ? response[0].terms_conditions
+              : "";
+          $("input[name=_id]").val(
+            response[0]._id != undefined ? response[0]._id : ""
+          );
+        }
+      },
+    });
+  }
+  getContent();
+  function updateContent(event) {
+    event.preventDefault();
+    var rules_regulations = rules.root.innerHTML;
+    var terms_conditions = terms.root.innerHTML;
+    var form = new FormData();
+    form.append("rules_regulations", rules_regulations);
+    form.append("terms_conditions", terms_conditions);
+    var settings = {
+      url: `/admin/content/edit/${event.target.elements._id.value}`,
+      method: "POST",
+      processData: false,
+      mimeType: "multipart/form-data",
+      contentType: false,
+      data: form,
+    };
+
+    $.ajax(settings).done(function (response) {
+      response = JSON.parse(response);
+      if (response.status == true) {
+        getContent();
+        alert(response.message);
+      }
+    });
+  }
+</script>

@@ -1,0 +1,273 @@
+<%- include('elements/header'); %>
+<div class="main-content">
+  <div class="main-content-inner">
+    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <li>
+          <i class="ace-icon fa fa-tachometer"></i>
+          <a href="<%=nodeAdminUrl%>/Dashboard">Dashboard</a>
+        </li>
+        <li class="active">Locations</li>
+      </ul>
+    </div>
+    <div class="page-content">
+      <div class="page-header col-xs-12">
+        <div class="col-xs-6"></div>
+        <div class="col-xs-6">
+          <!-- Button trigger modal -->
+          <div style="text-align: end">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-toggle="modal"
+              data-target="#exampleModal"
+            >
+              Add
+            </button>
+          </div>
+          <!-- Modal -->
+          <div
+            class="modal fade"
+            id="exampleModal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5
+                    class="modal-title"
+                    id="exampleModalLabel"
+                    style="display: inline"
+                  >
+                    Add Location
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form onsubmit="saveLocation(event)" id="saveLocation">
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label for="name">Location Name</label>
+                      <input type="text" class="form-control" name="name" />
+                      <span class="text-danger error-text name_err"></span>
+                    </div>
+                  </div>
+                  <div
+                    class="modal-footer"
+                    style="display: flex; justify-content: center"
+                  >
+                    <input type="submit" class="btn btn-primary" value="save" />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div
+            class="modal fade"
+            id="editModal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5
+                    class="modal-title"
+                    id="exampleModalLabel"
+                    style="display: inline"
+                  >
+                    Update Location
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form onsubmit="updateLocation(event)" id="updateLocation">
+                  <input type="hidden" name="_id" id="up_id">
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label for="name">Location Name</label>
+                      <input type="text" class="form-control" name="name" id="up_name" />
+                      <span class="text-danger error-text name_err"></span>
+                    </div>
+                  </div>
+                  <div
+                    class="modal-footer"
+                    style="display: flex; justify-content: center"
+                  >
+                    <input type="submit" class="btn btn-primary" value="Update" />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="clearfix">
+            <div class="pull-right tableTools-container"></div>
+          </div>
+          <div>
+            <table
+              id="allLocations"
+              class="table table-striped table-bordered table-hover"
+            >
+              <thead>
+                <tr>
+                  <th>id</th>
+                  <th>Location Name</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.page-content -->
+  </div>
+</div>
+<!-- /.main-content -->
+<%- include('elements/footer'); %>
+<!-- page specific plugin scripts -->
+<script>
+  var dataTable = "";
+  $(".error-text").empty();
+  $(function () {
+    dataTable = $("#allLocations").DataTable({
+      // processing: true,
+      // serverSide: true,
+      ordering: false,
+      ajax: "/admin/locations/all",
+      columns: [
+        {
+          render: (data, type, row, meta) => meta.row + 1,
+        },
+        {
+          data: "name",
+          name: "name",
+        },
+        {
+          data: "_id",
+          render: function (data, type, full, meta) {
+            return `<div class="hidden-sm hidden-xs action-buttons">
+                                  <a class="green" href="" onclick="getLocation(event,'${data}')" data-toggle="modal"
+              data-target="#editModal"> <i class="ace-icon fa fa-pencil bigger-130"></i> </a>
+                                  <a class="red" href="" onclick="deleteLocation(event,'${data}')"> <i class="ace-icon fa fa-trash-o bigger-130"></i>  </a>
+                               </div>`;
+          },
+        },
+      ],
+    });
+  });
+  function saveLocation(event) {
+    event.preventDefault();
+    $(".error-text").empty();
+    $.ajax({
+      url: "/admin/locations/add",
+      method: "POST",
+      dataType: "JSON",
+      processData: false,
+      contentType: false,
+      cache: false,
+      data: new FormData(event.target),
+      success: function (data) {
+        console.log(data);
+        if (data.status == true) {
+          alert(data.message);
+          dataTable.ajax.reload();
+          $("#saveLocation").trigger("reset");
+          $("#exampleModal").modal("toggle");
+          $(".error-text").empty();
+        } else {
+          printErrorMsg(data.error);
+        }
+      },
+    });
+  }
+  function deleteLocation(event, id) {
+    event.preventDefault();
+    if (confirm("Are you sure you want to delete this location")) {
+      $.ajax({
+        url: `/admin/locations/delete/${id}`,
+        method: "GET",
+        dataType: "JSON",
+        success: function (data) {
+          console.log(data);
+          if (data.status == true) {
+            alert(data.message);
+            dataTable.ajax.reload();
+            $(".error-text").empty();
+          }
+        },
+      });
+    }
+  }
+  function getLocation(event,id) {
+    $(".error-text").empty();
+    event.preventDefault();
+    $.ajax({
+      url:`/admin/locations/get/${id}`,
+      method: "GET",
+      dataType: "json",
+      success: function(data) {
+        //console.log([data.data]);
+        //console.log(data[0].name);
+        var response = [data.data];
+        console.log(response);
+        if(data.status == true){
+          $("#up_name").val(response[0].name);
+          $("#up_id").val(response[0]._id);
+        }
+      }
+    });
+  }
+  function updateLocation(event){
+    event.preventDefault();
+    //console.log(event.target.elements.name.value)
+    var id = event.target.elements._id.value
+    $.ajax({
+      url: `/admin/locations/edit/${id}`,
+      method: "POST",
+      dataType: "JSON",
+      processData: false,
+      contentType: false,
+      cache: false,
+      data: new FormData(event.target),
+      success: function (data) {
+        console.log(data);
+        if (data.status == true) {
+          alert(data.message);
+          dataTable.ajax.reload();
+          $("#updateLocation").trigger("reset");
+          $("#editModal").modal("toggle");
+          $(".error-text").empty();
+        } else {
+          printErrorMsg(data.error);
+        }
+      },
+    });
+  }
+  function printErrorMsg(msg) {
+    $.each(msg, function (key, value) {
+      $("." + key + "_err").text(value);
+    });
+  }
+</script>

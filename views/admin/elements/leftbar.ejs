@@ -1,0 +1,139 @@
+<div id="sidebar" class="sidebar responsive ace-save-state">
+  <script type="text/javascript">
+    try {
+      ace.settings.loadState("sidebar");
+    } catch (e) {}
+  </script>
+  <ul class="nav nav-list">
+    <li class="active">
+      <a href="<%=nodeAdminUrl%>/Dashboard">
+        <i class="menu-icon fa fa-tachometer"></i>
+        <span class="menu-text"> Dashboard </span>
+      </a>
+      <b class="arrow"></b>
+    </li>
+    <% if(session_check.LoginUser.role_id == '0'){ %>
+    <li class="<%=controller=='Users' ? 'open' : '' %>">
+      <a href="#" class="dropdown-toggle">
+        <i class="menu-icon fa fa-desktop"></i>
+        <span class="menu-text"> Users </span>
+        <b class="arrow fa fa-angle-down"></b>
+      </a>
+      <b class="arrow"></b>
+      <ul class="submenu">
+        <li
+          class="<%=controller=='Users' && action =='list' ? 'active' : '' %>"
+        >
+          <a href="<%=nodeAdminUrl%>/Users/list">
+            <i class="menu-icon fa fa-caret-right"></i> All Users
+          </a>
+          <b class="arrow"></b>
+        </li>
+        <li class="<%=controller=='Users' && action =='add' ? 'active' : '' %>">
+          <a href="<%=nodeAdminUrl%>/Users/add">
+            <i class="menu-icon fa fa-caret-right"></i> Add User
+          </a>
+          <b class="arrow"></b>
+        </li>
+      </ul>
+    </li>
+    <% } %>
+    <li class="<%=controller=='Students' ? 'open' : '' %>">
+      <a href="#" class="dropdown-toggle">
+        <i class="menu-icon fa fa-desktop"></i>
+        <span class="menu-text"> Student </span>
+        <b class="arrow fa fa-angle-down"></b>
+      </a>
+      <b class="arrow"></b>
+      <ul class="submenu">
+        <li
+          class="<%=controller=='Students' && action =='list' ? 'active' : '' %>"
+        >
+          <a href="<%=nodeAdminUrl%>/Students/list">
+            <i class="menu-icon fa fa-caret-right"></i> All Students
+          </a>
+          <b class="arrow"></b>
+        </li>
+        <li
+          class="<%=controller=='Students' && action =='add' ? 'active' : '' %>"
+        >
+          <a href="<%=nodeAdminUrl%>/Students/add">
+            <i class="menu-icon fa fa-caret-right"></i> Add Students
+          </a>
+          <b class="arrow"></b>
+        </li>
+      </ul>
+    </li>
+    <% if(session_check.LoginUser.role_id == '0'){ %>
+    <li class="<%=controller=='Location' ? 'open' : '' %>">
+      <a href="<%=nodeAdminUrl%>/locations">
+        <i class="menu-icon fa fa-caret-right"></i> All Locations
+      </a>
+      <b class="arrow"></b>
+    </li>
+    <% } %> <% if(session_check.LoginUser.role_id == '0'){ %>
+    <li class="<%=controller=='Contents' ? 'open' : '' %>">
+      <a href="<%=nodeAdminUrl%>/content">
+        <i class="menu-icon fa fa-caret-right"></i> Contents
+      </a>
+      <b class="arrow"></b>
+    </li>
+    <% } %>
+    <li class="<%=controller=='Memberships' ? 'open' : '' %>">
+      <a href="#" class="dropdown-toggle">
+        <i class="menu-icon fa fa-desktop"></i>
+        <span class="menu-text"> Memberships </span>
+        <b class="arrow fa fa-angle-down"></b>
+      </a>
+      <b class="arrow"></b>
+      <ul class="submenu">
+        <li
+          class="<%=controller=='Memberships' && action =='types' ? 'active' : '' %>"
+        >
+          <a href="<%=nodeAdminUrl%>/Memberships/types">
+            <i class="menu-icon fa fa-caret-right"></i> MembershipsTypes
+          </a>
+          <b class="arrow"></b>
+        </li>
+        <li
+          class="<%=controller=='Memberships' && action =='options' ? 'active' : '' %>"
+        >
+          <a href="<%=nodeAdminUrl%>/Memberships/options">
+            <i class="menu-icon fa fa-caret-right"></i> MembershipsOptions
+          </a>
+          <b class="arrow"></b>
+        </li>
+      </ul>
+    </li>
+    <% if(session_check.LoginUser.role_id == '0'){ %>
+      <li>
+        <a href="<%=nodeAdminUrl%>/generate-otp">
+          <i class="menu-icon fa fa-caret-right"></i> Generate OTP
+        </a>
+        <b class="arrow"></b>
+      </li>
+      <li>
+        <a href="<%=nodeAdminUrl%>/schedule-off">
+          <i class="menu-icon fa fa-caret-right"></i> Schedule Off
+        </a>
+        <b class="arrow"></b>
+      </li>
+      <% } %>
+      <li>
+        <a href="<%=nodeAdminUrl%>/setting">
+          <i class="menu-icon fa fa-caret-right"></i> Setting
+        </a>
+        <b class="arrow"></b>
+      </li>
+      
+  </ul>
+  <!-- /.nav-list -->
+  <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+    <i
+      id="sidebar-toggle-icon"
+      class="ace-icon fa fa-angle-double-left ace-save-state"
+      data-icon1="ace-icon fa fa-angle-double-left"
+      data-icon2="ace-icon fa fa-angle-double-right"
+    ></i>
+  </div>
+</div>

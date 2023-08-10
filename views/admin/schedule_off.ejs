@@ -1,0 +1,414 @@
+<%- include('elements/header'); %>
+
+<div class="main-content">
+  <div class="main-content-inner">
+    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <li>
+          <i class="ace-icon fa fa-tachometer"></i>
+          <a href="<%=nodeAdminUrl%>/Dashboard">Dashboard </a>
+        </li>
+        <li class="active">
+          <a href="<%=nodeAdminUrl%>/<%=controller%>/list"> Schedule Off </a>
+        </li>
+        <li class="active">List</li>
+      </ul>
+    </div>
+    <style>
+      .dt-buttons {
+        position: absolute;
+      }
+    </style>
+    <div class="page-content">
+      <%- include elements/flash.ejs %>
+      <div class="page-header col-xs-12" style="border: none">
+        <div class="col-xs-12" style="text-align: end">
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-toggle="modal"
+            data-target="#scheduleOffAdd"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div id="scheduleOffAdd" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                  &times;
+                </button>
+                <h4 class="modal-title">Add Schedule Off</h4>
+              </div>
+              <div class="modal-body">
+                <form onsubmit="saveScheduleOff(event)" id="saveScheduleOff">
+                  <input
+                    type="hidden"
+                    name="student_id"
+                    value=""
+                    id="student_id"
+                  />
+                  <div class="form-group row">
+                    <label class="col-md-4">Contact</label>
+                    <div class="col-md-8">
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="contact_number"
+                        onchange="getStudentDetail(event)"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-md-4">Name</label>
+                    <div class="col-md-8">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="first_name"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-md-4">Date</label>
+                    <div class="col-md-8">
+                      <input
+                        type="date"
+                        class="form-control"
+                        name="date"
+                        id="multipleDate"
+                        required
+                      />
+                      <span class="error" id="dateError"></span>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-md-4">Meal</label>
+                    <div class="col-md-8">
+                      <label class="radio-inline">
+                        <input
+                          type="radio"
+                          value="0"
+                          name="meal_type"
+                          required
+                        />Lunch
+                      </label>
+                      <label class="radio-inline">
+                        <input type="radio" value="1" name="meal_type" />Dinner
+                      </label>
+                      <label class="radio-inline">
+                        <input type="radio" value="2" name="meal_type" />Both
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-md-4">Reason</label>
+                    <div class="col-md-8">
+                      <textarea
+                        class="form-control"
+                        name="reason"
+                        required
+                      ></textarea>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-md-12 text-center">
+                      <input
+                        type="submit"
+                        class="btn btn-primary"
+                        value="save"
+                      />
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div id="imageModal" class="modal">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="modalImage" alt="Modal Image" />
+            <div id="caption"></div>
+          </div>
+          <!-- The Modal -->
+          <div class="modal" id="myModal">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">
+                    &times;
+                  </button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                  <div id="_calendar"></div>
+                </div>
+
+                <!-- Modal footer -->
+              </div>
+            </div>
+          </div>
+          <div>
+            <table
+              id="all_schedule_off"
+              class="table table-striped table-bordered table-hover"
+              style="width: 100% !important"
+            >
+              <thead>
+                <tr>
+                  <th>S.NO.</th>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Memberships Type</th>
+                  <th>Memberships Option</th>
+                  <th>Meal Type</th>
+                  <th>Date</th>
+                  <th>Reason</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.page-content -->
+    <div id="changeStatus" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div
+          class="modal-content"
+          style="height: 50px; width: 50%; margin: 0px auto"
+        >
+          <div class="modal-body">
+            <div class="form-group row">
+              <div class="col-md-6 text-center">
+                <input
+                  type="radio"
+                  name="status"
+                  value="1"
+                  onclick="changeStatus(event)"
+                />
+                Approve
+              </div>
+              <div class="col-md-6 text-center">
+                <input
+                  type="radio"
+                  name="status"
+                  value="2"
+                  onclick="changeStatus(event)"
+                />
+                Reject
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('elements/footer'); %>
+<script>
+  var dataTable = "";
+  var siteUrl = "<%=nodeSiteUrl%>";
+
+  $(function () {
+    dataTable = $("#all_schedule_off").DataTable({
+      dom: "Bfrtip",
+      buttons: ["csv"],
+      ordering: false,
+      ajax: "/admin/schedule-off/list",
+      columns: [
+        {
+          render: function (data, type, row, meta) {
+            return meta.row + 1;
+          },
+        },
+        {
+          data: "student",
+          render: function (data, type, row, meta) {
+            return `${data.first_name}`;
+          },
+        },
+        {
+          data: "student",
+          render: function (data, type, row, meta) {
+            return `${data.contact_number}`;
+          },
+        },
+        {
+          data: "membershipType",
+          render: function (data, type, row, meta) {
+            return `${data[0].name}`;
+          },
+        },
+        {
+          data: "membershipTypeOption",
+          render: function (data, type, row, meta) {
+            return `${data[0].name}`;
+          },
+        },
+        {
+          data: "meal_type",
+          render: function (data, type, row, meta) {
+            if (data == 0) {
+              return `Lunch`;
+            } else if (data == 1) {
+              return `Dinner`;
+            } else if (data == 2) {
+              return `Both`;
+            }
+          },
+        },
+        {
+          data: "scheduleOffDate",
+          render: function (data, type, row, meta) {
+            var dateRes = JSON.stringify(data);
+            // return `<input type="text" class="getdate" data-id='${dateRes}' />`;
+            return `<button type="button" data-id='${dateRes}' class="getdate">View</button>`;
+          },
+        },
+        {
+          data: "reason",
+          render: function (data, type, row, meta) {
+            if (data != undefined) {
+              return `${data}`;
+            } else {
+              return "";
+            }
+          },
+        },
+        {
+          data: "status",
+          render: function (data, type, row, meta) {
+            if (data == 0) {
+              return `<a href="" onclick="storeDate('${row._id}','${row.student_id}')"  data-toggle="modal" data-target="#changeStatus"><span class="label label-sm label-success">Pending</span></a>`;
+            } else if (data == 1) {
+              return `<a href=""  onclick="storeDate('${row._id}','${row.student_id}')" data-toggle="modal" data-target="#changeStatus"><span class="label label-sm label-warning">Approve</span></a>`;
+            } else {
+              return `<a href=""  onclick="storeDate('${row._id}','${row.student_id}')" data-toggle="modal" data-target="#changeStatus"><span class="label label-sm label-danger">Reject</span></a>`;
+            }
+          },
+        },
+      ],
+    });
+  });
+  $(document).ready(function () {
+    var button = $(".buttons-csv");
+    // Select the span element inside the button
+    var span = button.find("span");
+    // Change the text of the span
+    span.text("Generate Reports");
+  });
+  $(document).on("click", ".getdate", function () {
+    var data = $(this).attr("data-id");
+    var parsedData = JSON.parse(data);
+
+    var selectedDates = parsedData.map(function (item) {
+      return item.date;
+    });
+
+    var flatpickrInput = document.createElement("input");
+    flatpickrInput.setAttribute("type", "text");
+    flatpickrInput.className = "getdate-input";
+
+    // Append the flatpickr input element
+    $(this).replaceWith(flatpickrInput);
+
+    flatpickr(flatpickrInput, {
+      mode: "multiple",
+      dateFormat: "Y-m-d",
+      defaultDate: selectedDates,
+      readOnly: true,
+      onChange: function (selectedDates) {
+        // Do something with the selected dates array
+        console.log(selectedDates);
+      },
+    });
+  });
+  function storeDate(id, student_id) {
+    localStorage.setItem("scheduleoff_id", id);
+    localStorage.setItem("student_id", student_id);
+  }
+  function changeStatus(event) {
+    $("#changeStatus").modal("hide");
+    event.preventDefault();
+    var formData = new FormData();
+    formData.append("scheduleoff_id", localStorage.getItem("scheduleoff_id"));
+    formData.append("status", event.target.value);
+    formData.append("student_id", localStorage.getItem("student_id"));
+    $.ajax({
+      url: `/admin/schedule-off/status`,
+      method: "POST",
+      dataType: "json",
+      data: formData,
+      contentType: false,
+      processData: false,
+      success: function (data) {
+        console.log(data);
+        if (data.status == true) {
+          dataTable.ajax.reload();
+        }
+      },
+    });
+  }
+  function getStudentDetail(event) {
+    //console.log(event.target.value);
+    $.ajax({
+      url: `/admin/student/contact/${event.target.value}`,
+      method: "GET",
+      success: function (data) {
+        console.log(data);
+        if (data.status == true) {
+          $("#student_id").val(data.data._id);
+          $("input[name=first_name]").val(data.data.first_name);
+          $("input[name=date]").attr({
+            min: data.data.start_date,
+            max: data.data.end_date,
+          });
+          flatpickr("#multipleDate", {
+            mode: "multiple",
+            dateFormat: "Y-m-d",
+            minDate: data.data.start_date,
+            maxDate: data.data.end_date,
+          });
+        }
+      },
+    });
+  }
+  function saveScheduleOff(event) {
+    event.preventDefault();
+    var offDates = event.target.elements.date.value;
+    if (offDates != "") {
+      $.ajax({
+        url: `/api/ScheduleOff/save`,
+        method: "POST",
+        dataType: "json",
+        contentType: false,
+        processData: false,
+        data: new FormData(event.target),
+        success: function (data) {
+          console.log(data);
+          if (data.status == true) {
+            alert(data.message);
+            dataTable.ajax.reload();
+            $("#saveScheduleOff")[0].reset();
+            $("#scheduleOffAdd").modal("toggle");
+          }
+        },
+      });
+    }else{
+      $("#dateError").text("Please select date");
+    }
+  }
+</script>

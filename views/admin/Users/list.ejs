@@ -1,0 +1,118 @@
+<%- include('../elements/header'); %>
+<div class="main-content">
+   <div class="main-content-inner">
+      <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+         <ul class="breadcrumb">
+            <li> <i class="ace-icon fa fa-tachometer"></i> <a href="<%=nodeAdminUrl%>/Dashboard">Dashboard</a> </li>
+            <li class="active"><a href="<%=nodeAdminUrl%>/<%=controller%>/list"> Users </a> </li>
+            <li class="active">List</li>
+         </ul>
+      </div>
+      <div class="page-content">
+         <%- include ../elements/flash.ejs %>    
+         <div class="page-header col-xs-12">
+            <div class="col-xs-6">
+               <h1>  <%=controller%> List <small>    </h1>
+            </div>
+            <div class="col-xs-6"> 
+               <a href="<%=nodeAdminUrl%>/<%=controller%>/add%>"> <button class="btn btn-info pull-right" type="button">   Add   </button></a> 
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-xs-12">
+               <div class="clearfix">
+                  <div class="pull-right tableTools-container"></div>
+               </div>
+               <div class="table-header">  Results for all registered users. </div>
+               <div>
+                  <table id="all_users" class="table table-striped table-bordered table-hover">
+                     <thead>
+                        <tr>
+                           <th>S.NO.</th>
+                           <th>First Name</th>
+                           <th>Email</th>
+                           <th>Mobile Number</th>
+                           <th> <i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i> Status </th>
+                           <th class="hidden-480">Action</th>
+                        </tr>
+                     </thead>
+                     
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- /.page-content -->
+   </div>
+</div>
+<!-- /.main-content -->
+<%- include('../elements/footer'); %> 
+<script>
+   var dataTable = "";
+   var siteUrl = "<%=nodeSiteUrl%>";
+   $(function() {
+      // load all data
+     dataTable = $("#all_users").DataTable({
+       // processing: true,
+       // serverSide: true,
+       ordering: false,
+       ajax: "/admin/Users/All-List",
+       columns: [{
+         render: (data, type, row, meta) => meta.row + 1,
+       }, {
+         data: "first_name",
+         name: "first_name",
+       }, {
+         data: "email",
+         name: "email"
+       }, {
+         data: "contact_number",
+         name: "contact_number"
+       }, {
+         data: "is_active",
+         render: function(data, type, row, meta) {
+           if (data == 1) {
+             return `
+                  
+                 
+                <span class="label label-sm label-success">Active</span>`;
+           } else {
+             return `
+                  
+                 
+                <span class="label label-sm label-warning">Deactivate</span>`;
+           }
+         }
+       }, {
+         data: "_id",
+         render: function(data, type, row, meta) {
+           return `
+                  
+                 
+                <div class="hidden-sm hidden-xs action-buttons">
+                   <a class="green" href="<%=nodeAdminUrl%>/<%=controller%>/edit/${data}">
+                      <i class="ace-icon fa fa-pencil bigger-130"></i>
+                   </a>
+                   <a class="red" onclick="delete_user(event,'${data}')" href="" >
+                      <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                   </a>
+                </div>`;
+         },
+       }, ],
+     });
+     // check expiry
+   });
+   function delete_user(event, id) {
+     event.preventDefault();
+     $.ajax({
+       url: `/admin/Users/delete/${id}`,
+       method: "GET",
+       success: function(data) {
+         if (data.status == true) {
+           alert(data.message);
+           dataTable.ajax.reload();
+         }
+       }
+     });
+   }
+</script>

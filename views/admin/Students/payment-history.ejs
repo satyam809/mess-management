@@ -1,0 +1,91 @@
+<%- include('../elements/header'); %>
+
+<div class="main-content">
+  <div class="main-content-inner">
+    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <li>
+          <i class="ace-icon fa fa-tachometer"></i>
+          <a href="<%=nodeAdminUrl%>/Dashboard">Dashboard</a>
+        </li>
+        <li class="active">Payment History</li>
+      </ul>
+    </div>
+    <div class="page-content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="clearfix">
+            <div class="pull-right tableTools-container"></div>
+          </div>
+          <div>
+            <table
+              id="payment-history"
+              class="table table-striped table-bordered table-hover"
+              style="width: 100% !important"
+            >
+              <thead>
+                <tr>
+                  <th>S.NO.</th>
+                  <th>Student</th>
+                  <th>Payment</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.page-content -->
+  </div>
+</div>
+<!-- /.main-content -->
+<%- include('../elements/footer'); %>
+<!-- page specific plugin scripts -->
+<script>
+  var dataTable = "";
+  const urlParams = new URLSearchParams(window.location.search);
+  const studentId = urlParams.get("studentId");
+  $(function () {
+    dataTable = $("#payment-history").DataTable({
+      // processing: true,
+      // serverSide: true,
+      ordering: false,
+      ajax: `/admin/payment-history/get/${studentId}`,
+      columns: [
+        {
+          render: (data, type, row, meta) => meta.row + 1,
+        },
+        {
+          data: "student[0].first_name",
+          name: "student[0].first_name",
+        },
+        {
+          data: "payment",
+          name: "payment",
+        },
+        {
+          data: "createdAt",
+          render: function (data, type, full, meta) {
+            const dateStr = data;
+            const date = new Date(dateStr);
+
+            const options = {
+              timeZone: "Asia/Kolkata", // Set the time zone to India
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            };
+
+            const formattedDate = date.toLocaleString("en-IN", options);
+            return formattedDate;
+          },
+        },
+      ],
+    });
+  });
+</script>

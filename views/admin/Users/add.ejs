@@ -1,0 +1,138 @@
+<%- include('../elements/header'); %> 
+<div class="main-content">
+   <div class="main-content-inner">
+      <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+         <ul class="breadcrumb">
+            <li> <i class="ace-icon fa fa-tachometer"></i> <a href="<%=nodeAdminUrl%>/Dashboard">Dashboard</a> </li>
+            <li class="active"><a href="<%=nodeAdminUrl%>/categories/list"> Categories </a> </li>
+            <li class="active"><%=action%></li>
+         </ul>
+         <div class="nav-search" id="nav-search">
+            <form class="form-search">
+               <span class="input-icon">
+               <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+               <i class="ace-icon fa fa-search nav-search-icon"></i>
+               </span>
+            </form>
+         </div>
+         <!-- /.nav-search -->
+      </div>
+      <div class="page-content">
+         <div class="page-header">
+            <h1>  Add New <%=controller%> <small>    </h1>
+         </div>
+         <!-- /.page-header -->
+         <div class="row">
+            <%- include ../elements/flash.ejs %>  
+            <div class="col-xs-12 col-sm-6">
+               <div class=" ">
+                  <form method="post" action="<%=nodeAdminUrl%>/<%=controller%>/add" enctype="multipart/form-data">
+                    <input type="hidden" name="role_id" value="1">
+                     <div class="widget-body">
+                        <div class="widget-main">
+                           <div class="form-group row">
+                              <label for="form-field-select-1" class="col-sm-4 col-form-label">First Name</label>
+                              <div class="col-sm-8">
+                                 <input type="text" class="form-control" id="form-field-select-1" value="<%=data.first_name%>" placeholder="Name" name="first_name">
+                                 <span class="error"><%=errorData.first_name%></span>
+                              </div>
+                           </div>
+                           <br>
+                           <div class="form-group row">
+                              <label for="form-field-select-1" class="col-sm-4 col-form-label">Last Name</label>
+                              <div class="col-sm-8">
+                                 <input type="text" class="form-control" id="form-field-select-1" value="<%=data.last_name%>" placeholder="Last Name" name="last_name">
+                                 <span class="error"><%=errorData.last_name%></span>
+                              </div>
+                           </div>
+                           <br>
+                           <div class="form-group row">
+                              <label for="form-field-select-1" class="col-sm-4 col-form-label"> Email </label> 
+                              <div class="col-sm-8">
+                                 <input type="text" name="email" value="<%=data.email%>" id="form-field-select-1" placeholder="Email" class="form-control">  
+                                 <span class="error"><%=errorData.email%></span>  
+                              </div>
+                           </div>
+                           <br>  
+                           <div class="form-group row">
+                              <label for="form-field-select-1" class="col-sm-4 col-form-label"> Password </label> 
+                              <div class="col-sm-8">
+                                 <input type="password" name="password" value="<%=data.password%>" id="form-field-select-1" placeholder="Passowrd" class="form-control">  
+                                 <span class="error"><%=errorData.password%></span>
+                              </div>
+                           </div>
+                           <br>  
+                           <div class="form-group row">
+                              <label for="form-field-select-1" class="col-sm-4 col-form-label"> Mobile Number </label> 
+                              <div class="col-sm-8">
+                                 <input type="number" name="contact_number" value="<%=data.contact_number%>" id="form-field-select-1" placeholder="Mobile Number" class="form-control">  
+                                 <span class="error"><%=errorData.contact_number%></span> 
+                              </div>
+                           </div>
+                           <br>  
+                           <div class="form-group row">
+                              <label for="form-field-select-1" class="col-sm-4 col-form-label"> Profile Image </label> 
+                              <div class="col-sm-8">
+                                 <input type="file" name="profile_pic" id="form-field-select-1" class="form-control">  
+                                 <span class="error"><%=errorData.profile_pic%></span>  
+                              </div>
+                           </div>
+                           <br/>
+                           <div class="form-group row">
+                              <label for="form-field-select-2" class="col-sm-4 col-form-label">Location</label>
+                              <div class="col-sm-8">
+                                 <select class="form-control" name="location_id">
+                                    <option value="" disabled selected>Select Location</option>
+                                    <% for (var i = 0; i < All_locations.length; i++) { %>
+                                       <option value="<%= All_locations[i]._id %>"><%= All_locations[i].name %></option>
+                                       <% } %>
+                                 </select>
+                              </div>
+                           </div>
+                           <br>
+                           <div class="form-group row">
+                              <label for="form-field-select-1" class="col-sm-4 col-form-label"> Monthly Salary </label> 
+                              <div class="col-sm-8">
+                                 <input type="number" name="salary" value="<%=data.salary%>" id="form-field-select-1" placeholder="Salary" class="form-control">  
+                                 <span class="error"><%=errorData.salary%></span>
+                              </div>
+                           </div>
+                           <br>   
+                           <div class="form-group row">
+                              <label for="form-field-select-2" class="col-sm-4 col-form-label">Status</label> 
+                              <div class="col-sm-8">
+                                 <select class="form-control" name="is_active" id="form-field-select-2">
+                                    <option value="1" <%=data.is_active==1 ? 'selected' : '' %>>Active</option>
+                                    <option value="0"  <%=data.is_active==0 ? 'selected' : '' %>>Inactive</option>
+                                 </select>
+                                 <span class="error"><%=errorData.is_active%></span>
+                              </div>
+                           </div>
+                           <br><br>    
+                           <div>
+                              <div class="row">
+                                 <div class="col-md-offset-3 col-md-9">
+                                    <button class="btn btn-info" type="submit">
+                                    <i class="ace-icon fa fa-check bigger-110"></i>  Submit
+                                    </button>  
+                                    &nbsp; &nbsp; &nbsp;
+                                    <a href="<%=nodeAdminUrl%>/<%=controller%>/list%>"> <button class="btn" type="button">
+                                    Cancel 
+                                    </button></a>   
+                                 </div>
+                              </div>
+                              <div class="space-2"></div>
+                           </div>
+                        </div>
+                     </div>
+                  </form>
+               </div>
+            </div>
+            <!-- /.span --> 
+         </div>
+      </div>
+      <!-- /.page-content -->
+   </div>
+</div>
+<!-- /.main-content -->
+<%- include('../elements/footer'); %>

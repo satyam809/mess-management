@@ -1,0 +1,306 @@
+<%- include('../elements/header'); %>
+<div class="main-content">
+  <div class="main-content-inner">
+    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <li>
+          <i class="ace-icon fa fa-tachometer"></i>
+          <a href="<%=nodeAdminUrl%>/Dashboard">Dashboard</a>
+        </li>
+        <li class="active">Membership</li>
+      </ul>
+    </div>
+    <div class="page-content">
+      <div class="page-header col-xs-12">
+        <div class="col-xs-6"></div>
+        <div class="col-xs-6">
+          <!-- Button trigger modal -->
+          <div style="text-align: end">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-toggle="modal"
+              data-target="#exampleModal"
+            >
+              Add
+            </button>
+          </div>
+          <!-- Modal -->
+          <div
+            class="modal fade"
+            id="exampleModal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5
+                    class="modal-title"
+                    id="exampleModalLabel"
+                    style="display: inline"
+                  >
+                    Add Membership Type
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form onsubmit="saveMembershipType(event)" id="saveMembershipType">
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label>Name</label>
+                      <input type="text" class="form-control" name="name" />
+                      <span class="text-danger error-text name_err"></span>
+                    </div>
+                    <div class="form-group">
+                      <label>Status</label>
+                      <select class="form-control" name="status">
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div
+                    class="modal-footer"
+                    style="display: flex; justify-content: center"
+                  >
+                    <input type="submit" class="btn btn-primary" value="save" />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div
+            class="modal fade"
+            id="editModal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5
+                    class="modal-title"
+                    id="exampleModalLabel"
+                    style="display: inline"
+                  >
+                    Update Membership Type
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form onsubmit="updateMembershipType(event)" id="updateMembershipType">
+                  <input type="hidden" name="_id" id="up_id">
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label for="name">Name</label>
+                      <input type="text" class="form-control" name="name" id="up_name" />
+                      <span class="text-danger error-text name_err"></span>
+                    </div>
+                    <div class="form-group">
+                      <label>Status</label>
+                      <select class="form-control" name="status" id="up_status">
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div
+                    class="modal-footer"
+                    style="display: flex; justify-content: center"
+                  >
+                    <input type="submit" class="btn btn-primary" value="Update" />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="clearfix">
+            <div class="pull-right tableTools-container"></div>
+          </div>
+          <div>
+            <table
+              id="allTypes"
+              class="table table-striped table-bordered table-hover"
+            >
+              <thead>
+                <tr>
+                  <th>id</th>
+                  <th>Name</th>
+                  <th>
+                    <i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i> Status
+                  </th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.page-content -->
+  </div>
+</div>
+<!-- /.main-content -->
+<%- include('../elements/footer'); %>
+<!-- page specific plugin scripts -->
+<script>
+  var dataTable = "";
+  $(".error-text").empty();
+  $(function () {
+    dataTable = $("#allTypes").DataTable({
+      // processing: true,
+      // serverSide: true,
+      ordering: false,
+      ajax: "/admin/Memberships/types_list",
+      columns: [
+        {
+          render: (data, type, row, meta) => meta.row + 1,
+        },
+        {
+          data: "name",
+          name: "name",
+        },
+        {
+         data: "status",
+         render: function(data, type, row, meta) {
+           if (data == 1) {
+             return `
+                  
+                 
+                <span class="label label-sm label-success">Active</span>`;
+           } else {
+             return `
+                  
+                 
+                <span class="label label-sm label-warning">Deactivate</span>`;
+           }
+         }
+       },
+        {
+          data: "_id",
+          render: function (data, type, full, meta) {
+            return `<div class="hidden-sm hidden-xs action-buttons">
+                                  <a class="green" href="" onclick="getType(event,'${data}')" data-toggle="modal"
+              data-target="#editModal"> <i class="ace-icon fa fa-pencil bigger-130"></i> </a>
+                          
+                               </div>`;
+          },
+        },
+      ],
+    });
+  });
+  function saveMembershipType(event) {
+    event.preventDefault();
+    $(".error-text").empty();
+    $.ajax({
+      url: "/admin/Memberships/add_type",
+      method: "POST",
+      dataType: "JSON",
+      processData: false,
+      contentType: false,
+      cache: false,
+      data: new FormData(event.target),
+      success: function (data) {
+        console.log(data);
+        if (data.status == true) {
+          alert(data.message);
+          dataTable.ajax.reload();
+          $("#saveMembershipType").trigger("reset");
+          $("#exampleModal").modal("toggle");
+          $(".error-text").empty();
+        } else {
+          printErrorMsg(data.error);
+        }
+      },
+    });
+  }
+  function deleteOption(event, id) {
+    event.preventDefault();
+    if (confirm("Are you sure you want to delete this?")) {
+      $.ajax({
+        url: `/admin/Memberships/delete_type/${id}`,
+        method: "GET",
+        success: function (data) {
+          console.log(data);
+          if (data.status == true) {
+            alert(data.message);
+            dataTable.ajax.reload();
+            $(".error-text").empty();
+          }
+        },
+      });
+    }
+  }
+  function getType(event,id) {
+    $(".error-text").empty();
+    event.preventDefault();
+    $.ajax({
+      url:`/admin/Memberships/get_type/${id}`,
+      method: "GET",
+      dataType: "json",
+      success: function(data) {
+        //console.log([data.data]);
+        //console.log(data[0].name);
+        var response = [data.data];
+        console.log(response);
+        if(data.status == true){
+          $("#up_name").val(response[0].name);
+          $("#up_id").val(response[0]._id);
+          $("#up_status").val(response[0].status).prop("selected",true);
+        }
+      }
+    });
+  }
+  function updateMembershipType(event){
+    event.preventDefault();
+    //console.log(event.target.elements.name.value)
+    var id = event.target.elements._id.value
+    $.ajax({
+      url: `/admin/Memberships/update_type/${id}`,
+      method: "POST",
+      dataType: "JSON",
+      processData: false,
+      contentType: false,
+      cache: false,
+      data: new FormData(event.target),
+      success: function (data) {
+        console.log(data);
+        if (data.status == true) {
+          alert(data.message);
+          dataTable.ajax.reload();
+          $("#updateMembershipType").trigger("reset");
+          $("#editModal").modal("toggle");
+          $(".error-text").empty();
+        } else {
+          printErrorMsg(data.error);
+        }
+      },
+    });
+  }
+  function printErrorMsg(msg) {
+    $.each(msg, function (key, value) {
+      $("." + key + "_err").text(value);
+    });
+  }
+</script>
